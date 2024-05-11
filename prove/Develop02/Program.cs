@@ -4,27 +4,55 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Create a new journal
-        Journal myJournal = new Journal();
+        Journal journal = new Journal();
+        PromptGenerator promptGenerator = new PromptGenerator();
 
-        // Add some entries
-        myJournal.AddEntry(new Entry("2024-05-04", "What was the best part of my day?", "The sunrise was beautiful today."));
-        myJournal.AddEntry(new Entry("2024-05-04", "Who was the most interesting person I interacted with today?", "I had a fascinating conversation with my neighbor."));
-        myJournal.AddEntry(new Entry("2024-05-03", "How did I see the hand of the Lord in my life today?", "I found peace in a difficult situation."));
-        myJournal.AddEntry(new Entry("2024-05-03", "What was the strongest emotion I felt today?", "I felt a surge of joy when I accomplished my task."));
+        bool exit = false;
 
-        // Display the journal entries
-        Console.WriteLine("Displaying Journal Entries:");
-        myJournal.Display();
+        while (!exit)
+        {
+            Console.WriteLine("Menu:");
+            Console.WriteLine("1. Write a new entry");
+            Console.WriteLine("2. Display the journal");
+            Console.WriteLine("3. Save the journal to a file");
+            Console.WriteLine("4. Load the journal from a file");
+            Console.WriteLine("5. Exit");
 
-        // Save the journal to a file
-        myJournal.SaveToFile("my_journal.txt");
-        Console.WriteLine("Journal saved to file.");
+            int choice;
+            while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 5)
+            {
+                Console.WriteLine("Invalid input. Please enter a number from 1 to 5.");
+            }
 
-        // Load the journal from a file
-        Journal loadedJournal = new Journal();
-        loadedJournal.LoadFromFile("my_journal.txt");
-        Console.WriteLine("\nJournal loaded from file. Displaying loaded entries:");
-        loadedJournal.Display();
+            switch (choice)
+            {
+                case 1:
+                    string prompt = promptGenerator.GetRandomPrompt();
+                    Console.WriteLine($"Prompt: {prompt}");
+                    Console.Write("Entry: ");
+                    string entryText = Console.ReadLine();
+                    string date = DateTime.Now.ToShortDateString();
+                    Entry newEntry = new Entry(date, prompt, entryText);
+                    journal.AddEntry(newEntry);
+                    break;
+                case 2:
+                    Console.WriteLine("Journal Entries:");
+                    journal.DisplayAll();
+                    break;
+                case 3:
+                    Console.Write("Enter filename to save: ");
+                    string saveFilename = Console.ReadLine();
+                    journal.SaveToFile(saveFilename);
+                    break;
+                case 4:
+                    Console.Write("Enter filename to load: ");
+                    string loadFilename = Console.ReadLine();
+                    journal.LoadFromFile(loadFilename);
+                    break;
+                case 5:
+                    exit = true;
+                    break;
+            }
+        }
     }
 }
